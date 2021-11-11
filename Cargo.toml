@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-ffmpeg-next = "4.4.0"
 rand = "0.8.0"
+snafu = "0.6.10"
 structopt = "0.3.16"
 tokio = { version = "1.13.0", features = ["full"] }

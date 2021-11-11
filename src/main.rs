@@ -2,10 +2,8 @@ use std::path::PathBuf;
 use structopt::StructOpt;
 
 mod collection;
-use collection::get_files;
-
-mod errors;
-use errors::ReadError;
+mod error;
+mod ffmpeg;
 
 #[derive(Debug, StructOpt)]
 #[structopt(
@@ -39,10 +37,9 @@ struct Opt {
     length: f64,
 }
 
-fn main() -> Result<(), ReadError> {
+fn main() {
     let opt = Opt::from_args();
     let files = get_files(&opt.in_dir, opt.filetype, opt.number_of_files, opt.length)?;
 
     println!("Files to cut: {:?}", files);
-    Ok(())
 }
