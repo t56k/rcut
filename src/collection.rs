@@ -21,7 +21,12 @@ pub struct FileCut<'a> {
     pub stop: f64,
 }
 
-pub fn get_files(in_dir: &Path, filetype: String, number_of_files: i16, length: f64) -> Result<CollectionOptions, std::io::Error> {
+pub fn select(
+    in_dir: &Path,
+    filetype: String,
+    number_of_files: i16,
+    length: f64,
+) -> Result<CollectionOptions, std::io::Error> {
     let mut dir_entries: Vec<PathBuf> = vec![in_dir.to_path_buf()];
     let mut files_to_cut: Vec<FileCut> = vec![];
     let mut i: i16 = 0;
@@ -29,15 +34,13 @@ pub fn get_files(in_dir: &Path, filetype: String, number_of_files: i16, length: 
     while let Some(entry) = dir_entries.pop() {
         for inner_entry in fs::read_dir(&entry)? {
             if let Ok(entry) = inner_entry {
-                if entry.path().is_dir() {
-                    dir_entries.push(entry.path());
-                } else {
-                    if entry.path().extension() == Some(OsStr::new(&filetype)) {
-                        while i < number_of_files {
-                            let path = string_to_static_str(entry.path().into_os_string().into_string().unwrap());
-                            files_to_cut.push(init_file_cut(path, length));
-                            i += 1;
-                        }
+                if entry.path().extension() == Some(OsStr::new(&filetype)) {
+                    while i < number_of_files {
+                        let path = string_to_static_str(
+                            entry.path().into_os_string().into_string().unwrap(),
+                        );
+                        files_to_cut.push(init_file_cut(path, length));
+                        i += 1;
                     }
                 }
             }
@@ -46,7 +49,7 @@ pub fn get_files(in_dir: &Path, filetype: String, number_of_files: i16, length: 
 
     Ok(CollectionOptions {
         number_of_files,
-        files: files_to_cut
+        files: files_to_cut,
     })
 }
 
@@ -59,10 +62,23 @@ pub fn init_file_cut(path: &str, length: f64) -> FileCut {
         path,
         duration,
         start: (duration * x) - length,
-        stop: (duration * x),
+        stop: length,
     }
 }
 
-fn string_to_static_str(s: String) -> &'static str {
+pub fn cut_file(file: &FileCut, out_dir: &Path) {
+    extract_audio_clip(
+        file.path,
+        &file.start.to_string(),
+        &file.stop.to_string(),
+        &out_dir
+            .to_path_buf()
+            .into_os_string()
+            .into_string()
+            .unwrap(),
+    );
+}
+
+pub fn string_to_static_str(s: String) -> &'static str {
     Box::leak(s.into_boxed_str())
 }

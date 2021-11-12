@@ -4,7 +4,7 @@ use std::process::{Command, Stdio};
 
 use crate::error::*;
 
-pub fn get_video_duration(input_video_path: &str) -> Result<f64> {
+pub fn get_video_duration(input: &str) -> Result<f64> {
     let mut cmd = Command::new("ffprobe")
         .args(&[
             "-v",
@@ -13,7 +13,7 @@ pub fn get_video_duration(input_video_path: &str) -> Result<f64> {
             "format=duration",
             "-of",
             "default=noprint_wrappers=1:nokey=1",
-            input_video_path,
+            input,
         ])
         .stdout(Stdio::piped())
         .spawn()
@@ -30,20 +30,19 @@ pub fn get_video_duration(input_video_path: &str) -> Result<f64> {
         .context(ParseDurationError)?;
 
     cmd.wait().context(FFMPEGExitError)?;
-
     Ok(duration)
 }
 
-pub fn extract_clip(input_video_path: &str, start: f64, stop: f64, output_audio_path: &str) -> Result<str> {
+pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) -> Result<f64> {
     let mut cmd = Command::new("ffmpeg")
         .args(&[
             "-i",
-            input_video_path,
+            input,
             "-ss",
             start,
             "-t",
             stop,
-            output_audio_path
+            &(output.to_owned() + "/" + input + ".wav"),
         ])
         .stdout(Stdio::piped())
         .spawn()
@@ -51,15 +50,14 @@ pub fn extract_clip(input_video_path: &str, start: f64, stop: f64, output_audio_
 
     let stdout = cmd.stdout.as_mut().unwrap();
     let stdout_reader = BufReader::new(stdout);
-    let result = stdout_reader
+    let out = stdout_reader
         .lines()
         .next()
         .context(FFMPEGLineReadError)?
         .unwrap()
-        .parse::<str>()
+        .parse::<f64>()
         .context(ParseDurationError)?;
 
     cmd.wait().context(FFMPEGExitError)?;
-
-    Ok(result)
+    Ok(out)
 }
