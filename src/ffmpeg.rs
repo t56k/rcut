@@ -42,7 +42,7 @@ pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) ->
             start,
             "-t",
             stop,
-            &(output.to_owned() + "/" + input + ".wav"),
+            &(output.to_owned() + "/" + input + "-" + start + ".wav"),
         ])
         .stdout(Stdio::piped())
         .spawn()
