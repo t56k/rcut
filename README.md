@@ -15,3 +15,4 @@ Make any dirs first, it ain't that polished.
 ### Todo
 
 - Switch to `tokio` for `cmd` calls
+- Make necessary dirs on run
