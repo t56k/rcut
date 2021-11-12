@@ -5,6 +5,8 @@ mod collection;
 mod error;
 mod ffmpeg;
 
+use crate::collection::get_files;
+
 #[derive(Debug, StructOpt)]
 #[structopt(
     name = "rcut",
@@ -39,7 +41,7 @@ struct Opt {
 
 fn main() {
     let opt = Opt::from_args();
-    let files = get_files(&opt.in_dir, opt.filetype, opt.number_of_files, opt.length)?;
+    let files = get_files(&opt.in_dir, opt.filetype, opt.number_of_files, opt.length);
 
     println!("Files to cut: {:?}", files);
 }
