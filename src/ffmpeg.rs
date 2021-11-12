@@ -34,6 +34,8 @@ pub fn get_video_duration(input: &str) -> Result<f64> {
 }
 
 pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) -> Result<f64> {
+    let split_input = input.split(".").collect::<String>();
+    let mut filename = split_input.to_string();
     let mut cmd = Command::new("ffmpeg")
         .args(&[
             "-i",
@@ -42,7 +44,7 @@ pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) ->
             start,
             "-t",
             stop,
-            &(output.to_owned() + "/" + input + "-" + start + ".wav"),
+            &(output.to_owned() + "/" + &filename + "-" + start + ".wav"),
         ])
         .stdout(Stdio::piped())
         .spawn()
