@@ -9,7 +9,7 @@ use crate::ffmpeg::*;
 
 #[derive(Debug)]
 pub struct CollectionOptions<'a> {
-    pub files: Vec<FileCut<'a>>,
+    pub files: Vec<FileCut<'a>>
 }
 
 #[derive(Debug)]
@@ -23,6 +23,7 @@ pub struct FileCut<'a> {
 pub fn select(
     in_dir: &Path,
     filetype: String,
+    samples: i16,
     length: f64,
 ) -> Result<CollectionOptions, std::io::Error> {
     let mut dir_entries: Vec<PathBuf> = vec![in_dir.to_path_buf()];
@@ -35,7 +36,9 @@ pub fn select(
                     let path = string_to_static_str(
                         entry.path().into_os_string().into_string().unwrap(),
                     );
-                    files_to_cut.push(init_file_cut(path, length));
+                    for _ in 0..samples {
+                        files_to_cut.push(init_file_cut(path, length));
+                    }
                 }
             }
         }
