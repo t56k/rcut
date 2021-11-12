@@ -24,6 +24,7 @@ pub struct FileCut<'a> {
 pub fn get_files(in_dir: &Path, filetype: String, number_of_files: i16, length: f64) -> Result<CollectionOptions, std::io::Error> {
     let mut dir_entries: Vec<PathBuf> = vec![in_dir.to_path_buf()];
     let mut files_to_cut: Vec<FileCut> = vec![];
+    let mut i: i16 = 0;
 
     while let Some(entry) = dir_entries.pop() {
         for inner_entry in fs::read_dir(&entry)? {
@@ -32,8 +33,11 @@ pub fn get_files(in_dir: &Path, filetype: String, number_of_files: i16, length: 
                     dir_entries.push(entry.path());
                 } else {
                     if entry.path().extension() == Some(OsStr::new(&filetype)) {
-                        let path = string_to_static_str(entry.path().into_os_string().into_string().unwrap());
-                        files_to_cut.push(init_file_cut(path, length));
+                        while i < number_of_files {
+                            let path = string_to_static_str(entry.path().into_os_string().into_string().unwrap());
+                            files_to_cut.push(init_file_cut(path, length));
+                            i += 1;
+                        }
                     }
                 }
             }
