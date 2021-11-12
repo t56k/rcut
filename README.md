@@ -2,8 +2,8 @@
 
 ## Random audio sample generator
 
-Generates `n` samples from a directory `s` of `l` length from `t` format. Good for beatmaking and not much else. Requires `ffmpeg` and `ffprobe` on the `PATH`.
+Generates `n` samples from directory `i` of `l` length from `t` format to `o` directory. Good for beatmaking and not much else. Requires `ffmpeg` and `ffprobe` on the `PATH`.
 
 ```
-cargo run --release -- -s test -l 10 -n 3 -t mkv
+cargo run --release -- -i test -l 10 -n 3 -t mkv -o out
 ```

@@ -14,8 +14,8 @@ use crate::collection::get_files;
 )]
 struct Opt {
     #[structopt(
-        short = "s",
-        long = "source",
+        short = "i",
+        long = "input",
         parse(from_os_str)
     )]
     in_dir: PathBuf,
@@ -37,6 +37,12 @@ struct Opt {
         default_value = "1"
     )]
     length: f64,
+    #[structopt(
+        short = "o",
+        long = "output",
+        parse(from_os_str)
+    )]
+    out_dir: PathBuf,
 }
 
 fn main() {

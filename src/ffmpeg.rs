@@ -34,13 +34,32 @@ pub fn get_video_duration(input_video_path: &str) -> Result<f64> {
     Ok(duration)
 }
 
-// pub fn extract_clip(input_video_path: &str) -> Result<str> {
-//     let mut cmd = Command::new("ffmpeg")
-//         .args(&[
-//             "-i",
-//             input_video_path,
-//         ])
-//         .stdout(Stdio::piped())
-//         .spawn()
-//         .context(CommandSpawnError)?;
-// }
+pub fn extract_clip(input_video_path: &str, start: f64, stop: f64, output_audio_path: &str) -> Result<str> {
+    let mut cmd = Command::new("ffmpeg")
+        .args(&[
+            "-i",
+            input_video_path,
+            "-ss",
+            start,
+            "-t",
+            stop,
+            output_audio_path
+        ])
+        .stdout(Stdio::piped())
+        .spawn()
+        .context(CommandSpawnError)?;
+
+    let stdout = cmd.stdout.as_mut().unwrap();
+    let stdout_reader = BufReader::new(stdout);
+    let result = stdout_reader
+        .lines()
+        .next()
+        .context(FFMPEGLineReadError)?
+        .unwrap()
+        .parse::<str>()
+        .context(ParseDurationError)?;
+
+    cmd.wait().context(FFMPEGExitError)?;
+
+    Ok(result)
+}
