@@ -14,8 +14,6 @@ struct Opt {
     in_dir: PathBuf,
     #[structopt(short = "t", long = "filetype", default_value = "mkv")]
     filetype: String,
-    #[structopt(short = "n", long = "number", default_value = "99")]
-    number_of_files: i16,
     #[structopt(short = "l", long = "length", default_value = "1")]
     length: f64,
     #[structopt(short = "o", long = "output", parse(from_os_str))]
@@ -25,7 +23,7 @@ struct Opt {
 fn main() {
     let opt = Opt::from_args();
     let mut collection =
-        select(&opt.in_dir, opt.filetype, opt.number_of_files, opt.length).unwrap();
+        select(&opt.in_dir, opt.filetype, opt.length).unwrap();
 
     for file in collection.files.iter_mut() {
         cut_file(file, &opt.out_dir);
