@@ -31,7 +31,7 @@ pub fn get_video_duration(input: &str) -> Result<f64, std::io::Error> {
 }
 
 pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) {
-    let split_input = input.split(".").collect::<String>();
+    let split_input = input.split('.').collect::<String>();
     let mut cmd = Command::new("ffmpeg")
         .args(&[
             "-i",

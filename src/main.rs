@@ -23,8 +23,7 @@ struct Opt {
 
 fn main() {
     let opt = Opt::from_args();
-    let mut collection =
-        select(&opt.in_dir, opt.filetype, opt.samples, opt.length).unwrap();
+    let mut collection = select(&opt.in_dir, opt.filetype, opt.samples, opt.length).unwrap();
 
     for file in collection.files.iter_mut() {
         cut_file(file, &opt.out_dir);

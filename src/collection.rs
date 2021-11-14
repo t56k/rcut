@@ -8,7 +8,7 @@ use crate::ffmpeg::*;
 
 #[derive(Debug)]
 pub struct CollectionOptions<'a> {
-    pub files: Vec<FileCut<'a>>
+    pub files: Vec<FileCut<'a>>,
 }
 
 #[derive(Debug)]
@@ -29,15 +29,12 @@ pub fn select(
     let mut files_to_cut: Vec<FileCut> = vec![];
 
     while let Some(entry) = dir_entries.pop() {
-        for inner_entry in fs::read_dir(&entry)? {
-            if let Ok(entry) = inner_entry {
-                if entry.path().extension() == Some(OsStr::new(&filetype)) {
-                    let path = string_to_static_str(
-                        entry.path().into_os_string().into_string().unwrap(),
-                    );
-                    for _ in 0..samples {
-                        files_to_cut.push(init_file_cut(path, length));
-                    }
+        for entry in (fs::read_dir(&entry)?).flatten() {
+            if entry.path().extension() == Some(OsStr::new(&filetype)) {
+                let path =
+                    string_to_static_str(entry.path().into_os_string().into_string().unwrap());
+                for _ in 0..samples {
+                    files_to_cut.push(init_file_cut(path, length));
                 }
             }
         }
