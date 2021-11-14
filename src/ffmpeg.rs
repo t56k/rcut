@@ -1,10 +1,7 @@
-use snafu::{OptionExt, ResultExt};
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 
-use crate::error::*;
-
-pub fn get_video_duration(input: &str) -> Result<f64> {
+pub fn get_video_duration(input: &str) -> Result<f64, std::io::Error> {
     let mut cmd = Command::new("ffprobe")
         .args(&[
             "-v",
@@ -17,23 +14,23 @@ pub fn get_video_duration(input: &str) -> Result<f64> {
         ])
         .stdout(Stdio::piped())
         .spawn()
-        .context(CommandSpawnError)?;
+        .expect("couldnt get duration");
 
     let stdout = cmd.stdout.as_mut().unwrap();
     let stdout_reader = BufReader::new(stdout);
-    let duration = stdout_reader
+    let out = stdout_reader
         .lines()
         .next()
-        .context(FFMPEGLineReadError)?
+        .expect("cannot read lines")
         .unwrap()
         .parse::<f64>()
-        .context(ParseDurationError)?;
+        .expect("cannot parse int");
 
-    cmd.wait().context(FFMPEGExitError)?;
-    Ok(duration)
+    cmd.wait().expect("failed duration");
+    Ok(out)
 }
 
-pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) -> Result<f64> {
+pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) {
     let split_input = input.split(".").collect::<String>();
     let mut cmd = Command::new("ffmpeg")
         .args(&[
@@ -47,18 +44,11 @@ pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) ->
         ])
         .stdout(Stdio::piped())
         .spawn()
-        .context(CommandSpawnError)?;
+        .expect("couldnt win");
 
     let stdout = cmd.stdout.as_mut().unwrap();
     let stdout_reader = BufReader::new(stdout);
-    let out = stdout_reader
-        .lines()
-        .next()
-        .context(FFMPEGLineReadError)?
-        .unwrap()
-        .parse::<f64>()
-        .context(ParseDurationError)?;
+    let out = stdout_reader.lines();
 
-    cmd.wait().context(FFMPEGExitError)?;
-    Ok(out)
+    cmd.wait().expect("failed extraction");
 }

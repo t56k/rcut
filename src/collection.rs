@@ -4,7 +4,6 @@ use std::path::{Path, PathBuf};
 
 use rand::Rng;
 
-use crate::error::*;
 use crate::ffmpeg::*;
 
 #[derive(Debug)]

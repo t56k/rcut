@@ -5,6 +5,5 @@ edition = "2021"
 
 [dependencies]
 rand = "0.8.0"
-snafu = "0.6.10"
 structopt = "0.3.16"
 tokio = { version = "1.13.0", features = ["full"] }

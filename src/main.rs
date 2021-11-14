@@ -2,7 +2,6 @@ use std::path::PathBuf;
 use structopt::StructOpt;
 
 mod collection;
-mod error;
 mod ffmpeg;
 
 use crate::collection::*;
