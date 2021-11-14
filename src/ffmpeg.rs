@@ -46,9 +46,5 @@ pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) {
         .spawn()
         .expect("couldnt win");
 
-    let stdout = cmd.stdout.as_mut().unwrap();
-    let stdout_reader = BufReader::new(stdout);
-    let out = stdout_reader.lines();
-
     cmd.wait().expect("failed extraction");
 }
