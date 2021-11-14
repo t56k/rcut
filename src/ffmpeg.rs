@@ -1,3 +1,4 @@
+use std::borrow::Cow;
 use std::io::{BufRead, BufReader};
 use std::process::{Command, Stdio};
 
@@ -31,7 +32,7 @@ pub fn get_video_duration(input: &str) -> Result<f64, std::io::Error> {
 }
 
 pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) {
-    let split_input = input.split('.').collect::<String>();
+    let filename = basename(input, '/');
     let mut cmd = Command::new("ffmpeg")
         .args(&[
             "-i",
@@ -40,11 +41,19 @@ pub fn extract_audio_clip(input: &str, start: &str, stop: &str, output: &str) {
             start,
             "-t",
             stop,
-            &(output.to_owned() + "/" + &split_input + "-" + start + ".mp3"),
+            &(output.to_owned() + "/" + &filename + "-" + start + ".mp3"),
         ])
         .stdout(Stdio::piped())
         .spawn()
         .expect("couldnt win");
 
     cmd.wait().expect("failed extraction");
+}
+
+fn basename<'a>(path: &'a str, sep: char) -> Cow<'a, str> {
+    let mut pieces = path.rsplit(sep);
+    match pieces.next() {
+        Some(p) => p.into(),
+        None => path.into()
+    }
 }
