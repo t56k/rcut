@@ -54,6 +54,6 @@ fn basename<'a>(path: &'a str, sep: char) -> Cow<'a, str> {
     let mut pieces = path.rsplit(sep);
     match pieces.next() {
         Some(p) => p.into(),
-        None => path.into()
+        None => path.into(),
     }
 }
